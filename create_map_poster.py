@@ -2,6 +2,7 @@ import osmnx as ox
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 import matplotlib.colors as mcolors
+from PIL import Image
 import numpy as np
 from geopy.geocoders import Nominatim
 from tqdm import tqdm
@@ -14,6 +15,8 @@ import argparse
 THEMES_DIR = "themes"
 FONTS_DIR = "fonts"
 POSTERS_DIR = "posters"
+MAP_FIGSIZE = (16, 16)
+POSTER_ASPECT_RATIO = (3, 4)
 
 
 def load_fonts():
@@ -142,6 +145,26 @@ def create_gradient_fade(ax, color, location='bottom', zorder=10):
     ax.imshow(gradient, extent=[xlim[0], xlim[1], y_bottom, y_top],
               aspect='auto', cmap=custom_cmap, zorder=zorder, origin='lower')
 
+
+def crop_image_to_aspect(image, aspect_ratio):
+    """
+    Crops the image to the desired width/height aspect ratio.
+    """
+    width, height = image.size
+    target_width = int(round(height * aspect_ratio))
+
+    if width == target_width:
+        return image
+
+    if width < target_width:
+        target_height = int(round(width / aspect_ratio))
+        top = (height - target_height) // 2
+        bottom = top + target_height
+        return image.crop((0, top, width, bottom))
+
+    left = (width - target_width) // 2
+    right = left + target_width
+    return image.crop((left, 0, right, height))
 
 def get_edge_colors_by_type(G):
     """
@@ -400,8 +423,13 @@ def create_poster(city, country, point, dist, output_file, output_format):
     plt.savefig(output_file, format=fmt, **save_kwargs)
 
     plt.close()
-    print(f"✓ Done! Poster saved as {output_file}")
 
+    target_ratio = POSTER_ASPECT_RATIO[0] / POSTER_ASPECT_RATIO[1]
+    with Image.open(output_file) as image:
+        cropped = crop_image_to_aspect(image, target_ratio)
+        if cropped.size != image.size:
+            cropped.save(output_file)
+    print(f"✓ Done! Poster saved as {output_file}")
 
 def print_examples():
     """Print usage examples."""
