@@ -166,6 +166,7 @@ def crop_image_to_aspect(image, aspect_ratio):
     right = left + target_width
     return image.crop((left, 0, right, height))
 
+
 def get_edge_colors_by_type(G):
     """
     Assigns colors to edges based on road type hierarchy.
@@ -430,6 +431,7 @@ def create_poster(city, country, point, dist, output_file, output_format):
         if cropped.size != image.size:
             cropped.save(output_file)
     print(f"✓ Done! Poster saved as {output_file}")
+
 
 def print_examples():
     """Print usage examples."""
