@@ -11,5 +11,8 @@
   "road_secondary": "#5A8A70",
   "road_tertiary": "#7AAA90",
   "road_residential": "#A0C8B0",
-  "road_default": "#7AAA90"
+  "road_default": "#7AAA90",
+  "cycleway": "#26332e",
+  "path": "#759487",
+  "railway": "#003314"
 }
